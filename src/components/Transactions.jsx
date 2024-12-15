@@ -3,9 +3,9 @@ import axios from "axios";
 
 function Transactions() {
   const [acc_name_from, setAcc_name_from] = useState("");
-  const [acc_no_from, setAcc_no_from] = useState("");
+  const [account_from, setAcc_no_from] = useState("");
   const [acc_name_to, setAcc_name_to] = useState("");
-  const [acc_no_to, setAcc_no_to] = useState("");
+  const [acoount_to, setAcc_no_to] = useState("");
   const [amount, setAmount] = useState("");
   const [paymentOption, setPaymentOption] = useState("Transfer Now");
   const [time, setTime] = useState("");
@@ -22,9 +22,9 @@ function Transactions() {
         API,
         {
           acc_name_from: acc_name_from,
-          acc_no_from: acc_no_from,
+          account_from: account_from,
           acc_name_to: acc_name_to,
-          acc_no_to: acc_no_to,
+          account_to: acoount_to  ,
           amount: amount,
         },
         {
@@ -60,7 +60,7 @@ function Transactions() {
         type="number"
         name="acc_no"
         placeholder="acc_no"
-        value={acc_no_from}
+        value={account_from}
         onChange={(e) => setAcc_no_from(e.target.value)}
       />
       <br />
@@ -76,7 +76,7 @@ function Transactions() {
         type="number"
         name="acc_no"
         placeholder="acc_no"
-        value={acc_no_to}
+        value={acoount_to}
         onChange={(e) => setAcc_no_to(e.target.value)}
       />
       <br />

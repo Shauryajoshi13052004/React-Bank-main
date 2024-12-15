@@ -6,11 +6,13 @@ function Acc() {
   const token = localStorage.getItem("accessToken");
 
   const [customers, setCustomers] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [amount, setAmount] = useState('');
   const [acc_type, setAcc_type] = useState('');
   const [paymentOption, setPaymentOption] = useState('withdraw'); 
+  const [user, setUser] = useState(''); 
+  
 
-  // Fetch customer data on component mount
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -19,12 +21,11 @@ function Acc() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(res); // Log the full response
-
-        setCustomers(res.data); // Set customers in state
+        console.log("Customers fetched:", res.data);
+        setCustomers(res.data);
       } catch (err) {
         console.error("Error fetching customers:", err);
-        setError("Error fetching customers");
+        setErrorMessage("Error fetching customers");
       }
     };
 
@@ -32,57 +33,60 @@ function Acc() {
   }, []);
 
   const handleDeposit = async () => {
+    if ( !acc_type || !amount) {
+        setErrorMessage("All fields are required!");
+        return;
+    }
+
     try {
       const res = await axios.post(
         'http://localhost:8000/home/deposit/',
-        {
-          account: acc_type,
-          amount: amount
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+        { account: acc_type, amount: amount },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log('Deposit created:', res.data);
+      setErrorMessage(null); // Clear error message on success
     } catch (err) {
-      console.error('Error creating deposit:', err);
+      console.error('Error creating deposit:', err.response?.data || err.message);
+      setErrorMessage(err.response?.data?.user?.[0] || "Failed to process deposit");
     }
   };
 
   const handleWithdraw = async () => {
+    if ( !acc_type || !amount) {
+      setErrorMessage("All fields are required!");
+      return;
+    }
+  
     try {
       const res = await axios.post(
         'http://localhost:8000/home/withdraw/',
-        {
-          account: acc_type,
-          amount: amount
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+        { account: acc_type, amount: amount },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log('Withdraw created:', res.data);
+      setErrorMessage(null); // Clear error message on success
     } catch (err) {
-      console.error('Error creating withdraw:', err);
+      console.error('Error creating withdraw:', err.response?.data || err.message);
+      setErrorMessage(err.response?.data?.user?.[0] || "Failed to process withdrawal");
     }
   };
+  
+  
 
   return (
     <>
       <div>
         <h3>Accounts:</h3>
-        {customers && customers.length > 0 ? (
+        {customers.length > 0 ? (
           <ul>
-            {customers.map((customer,i) => (
+            {customers.map((customer, i) => (
               <li key={i}>
                 <h3>id: {customer.id}</h3>
                 <h2>Account Type: {customer.account_type}</h2>
                 <p>Balance: {customer.balance}</p>
                 <p>Bank: {customer.bank}</p>
+                <p>user:{customer.user}</p>
               </li>
             ))}
           </ul>
@@ -112,14 +116,25 @@ function Acc() {
         />
         <br />
         <input 
+          type="user" 
+          name="user" 
+          placeholder="Which user ID" 
+          value={user} 
+          onChange={(e) => setUser(e.target.value)}
+          />
+
+        <br />
+        <input 
           type="number" 
           name="amount" 
           placeholder="Enter the amount" 
           value={amount} 
           onChange={(e) => setAmount(e.target.value)} 
         />
+
         <br />
         <br />
+        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
         {paymentOption === "deposit" ? (
           <button onClick={handleDeposit}>Deposit</button>
         ) : (
