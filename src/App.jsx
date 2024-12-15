@@ -6,6 +6,7 @@ import Deposit from '../src/components/Deposit'
 import Transactions from '../src/components/Transactions'
 import {Route,Routes} from 'react-router-dom'
 import UserList from './Page/UserList'
+import Dat from './Page/Dat'
 // import CreateUser from './Page/CreateUser'
 
 
@@ -26,6 +27,7 @@ function App() {
     <Route  path='/user-list' element={<UserList/>}/>
     <Route  path='/' element={<Register/>}/>
     <Route  path='/accounts' element={<Acc/>}/>
+    <Route  path='/dat' element={<Dat/>}/>
     <Route  path='/deposit' element={<Deposit/>}/>
     <Route  path='/transactions' element={<Transactions/>}/>
 

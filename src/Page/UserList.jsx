@@ -4,9 +4,9 @@ import axios from 'axios';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
-  const [newUser, setNewUser] = useState({ email: '', first_name: '', last_name: '', is_active: true, is_staff: false, is_verified: false });
+  const [newUser, setNewUser] = useState({ email: '', first_name: '', last_name: '', username: '', password: '', is_active: true, is_staff: false, is_verified: false });
   const [editUserId, setEditUserId] = useState(null);
-  const [editUser, setEditUser] = useState({ email: '', first_name: '', last_name: '', is_active: true, is_staff: false, is_verified: false });
+  const [editUser, setEditUser] = useState({ email: '', first_name: '', last_name: '', username: '', password: '', is_active: true, is_staff: false, is_verified: false });
 
   const API = "http://localhost:8000/api/users/";
   const token = localStorage.getItem("accessToken");
@@ -21,6 +21,8 @@ const UserList = () => {
           },
         });
         setUsers(res.data);
+        console.log(res.data);
+        
       } catch (err) {
         console.error("Error fetching users:", err);
       }
@@ -38,7 +40,7 @@ const UserList = () => {
         },
       });
       setUsers([...users, res.data]);
-      setNewUser({ email: '', first_name: '', last_name: '', is_active: true, is_staff: false, is_verified: false }); // Reset form
+      setNewUser({ email: '', first_name: '', last_name: '', username: '', password: '', is_active: true, is_staff: false, is_verified: false }); // Reset form
     } catch (err) {
       console.error("Error creating user:", err);
     }
@@ -51,6 +53,8 @@ const UserList = () => {
       email: user.email,
       first_name: user.first_name,
       last_name: user.last_name,
+      username: user.username,
+      password: '', // Do not pre-fill password
       is_active: user.is_active,
       is_staff: user.is_staff,
       is_verified: user.is_verified,
@@ -66,7 +70,7 @@ const UserList = () => {
       });
       setUsers(users.map(user => (user.id === editUserId ? res.data : user)));
       setEditUserId(null);
-      setEditUser({ email: '', first_name: '', last_name: '', is_active: true, is_staff: false, is_verified: false }); // Reset form
+      setEditUser({ email: '', first_name: '', last_name: '', username: '', password: '', is_active: true, is_staff: false, is_verified: false }); // Reset form
     } catch (err) {
       console.error("Error updating user:", err);
     }
@@ -110,6 +114,18 @@ const UserList = () => {
           placeholder="Last Name"
           value={newUser.last_name}
           onChange={(e) => setNewUser({ ...newUser, last_name: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Username"
+          value={newUser.username}
+          onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={newUser.password}
+          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
         />
         <label>
           Active:
@@ -159,6 +175,16 @@ const UserList = () => {
                   value={editUser.last_name}
                   onChange={(e) => setEditUser({ ...editUser, last_name: e.target.value })}
                 />
+                <input
+                  type="text"
+                  value={editUser.username}
+                  onChange={(e) => setEditUser({ ...editUser, username: e.target.value })}
+                />
+                <input
+                  type="password"
+                  placeholder="Password (leave blank to keep unchanged)"
+                  onChange={(e) => setEditUser({ ...editUser, password: e.target.value })}
+                />
                 <label>
                   Active:
                   <input
@@ -188,7 +214,7 @@ const UserList = () => {
               </>
             ) : (
               <>
-                {user.email} - {user.first_name} {user.last_name} (Active: {user.is_active ? 'Yes' : 'No'}, Staff: {user.is_staff ? 'Yes' : 'No'}, Verified: {user.is_verified ? 'Yes' : 'No'})
+                {user.email} - {user.first_name} {user.last_name} (Username: {user.username}, Active: {user.is_active ? 'Yes' : 'No'}, Staff: {user.is_staff ? 'Yes' : 'No'}, Verified: {user.is_verified ? 'Yes' : 'No'})
                 <button onClick={() => handleEditUser(user)}>Edit</button>
                 <button onClick={() => handleDeleteUser(user.id)}>Delete</button>
               </>
