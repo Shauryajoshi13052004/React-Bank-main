@@ -6,7 +6,6 @@ function Acc() {
   const token = localStorage.getItem("accessToken");
 
   const [customers, setCustomers] = useState([]);
-  const [error, setError] = useState(null);
   const [amount, setAmount] = useState('');
   const [acc_type, setAcc_type] = useState('');
   const [paymentOption, setPaymentOption] = useState('withdraw'); 
